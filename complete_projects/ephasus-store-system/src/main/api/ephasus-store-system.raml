@@ -1,0 +1,89 @@
+#%RAML 1.0
+baseUri: http://localhost:8081/api
+title: ephasus-store-system
+version: 1.0
+
+uses: 
+  storeTypes: types/ephasus-strore-types.raml
+
+
+/products:
+  get:
+    queryParameters: 
+      sku?: string
+      inShopify?:
+        type: boolean
+        description: If false the product has not been copied to Shopify
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: storeTypes.product[]
+            example: !include examples/product_collection_get_response.raml
+  /{productId}:
+    patch:
+      description: Update the shopifyProductId 
+      body: 
+        application/json:
+          type: storeTypes.product
+          example: !include examples/product_patch_request.raml
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "message": "Product was updated"
+                }
+
+/customers:
+  get:
+    queryParameters: 
+      email?: string
+    responses: 
+      200:
+        body:
+          application/json:
+            type: storeTypes.customer[]
+            example: !include examples/customer_collection_get_response.raml
+
+/orders:
+  get:
+    description: Return all orders
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: storeTypes.order[]
+            example: !include examples/order_collection_get_response.raml 
+  post:
+    description: Create a new order
+    body:
+      application/json:
+        type: storeTypes.order
+        example: !include examples/order_post_request.raml
+    responses: 
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "orderId": 123456789
+              }
+
+/shopifyProducts:
+  post:
+    description: Simplified Shopify product type
+    body:
+      application/json:
+        type: storeTypes.shopifyProduct
+        example: !include examples/shopifyproduct_post_request.raml
+    responses: 
+      201:
+        body: 
+          application/json:
+            example: |
+              {
+                "shopifyProductId": 12345566770985,
+                "sku": "SKU101-001"
+              }

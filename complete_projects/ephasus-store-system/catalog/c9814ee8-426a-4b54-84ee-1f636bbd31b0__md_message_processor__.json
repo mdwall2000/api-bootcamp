@@ -1,0 +1,16 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "simple-product-json"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "shopify-product-example-json"
+        }
+    },
+    "id": "c9814ee8-426a-4b54-84ee-1f636bbd31b0",
+    "version": "5.2.0.0"
+}

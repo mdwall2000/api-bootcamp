@@ -1,0 +1,44 @@
+Ephasus API Bootcamp Snippets
+
+Shopify Account info------------------------------------------------------
+---Paste the info from your account here
+shop.host=
+shop.username=
+shop.password=
+
+AWS Database--------------------------------------------------------------
+db.host=ephasusdb.cfqkthbsxyjd.us-east-2.rds.amazonaws.com
+db.port=3306
+db.user=bootcampuser
+db.password= <<announced in class>>
+db.database=bootcamp
+
+
+Implement get products flow------------------------------------------------
+
+--Transform--
+
+%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	id: payload01.product_id,
+	inventory: payload01.inventory,
+	name: payload01.name,
+	price: payload01.price,
+	shopifyProductId: "null" when payload01.shopify_product_id == null otherwise payload01.shopify_product_id,
+	sku: payload01.sku
+})
+
+--SQL--
+select * from product;
+
+
+
+Deploy and run walkthrough-----------------------------------------
+--Paste your system project Cloudhub url: 
+--Paste your experience project Cloudhub url: 
+Shopify listener path: /shopifyOrderCreationEvent
+
+Test Customer email: testingham5000@ephasus.com
+

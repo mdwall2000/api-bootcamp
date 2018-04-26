@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+    <flow name="postShopifyProduct">
+        <dw:transform-message doc:name="Transform Message" metadata:id="688d0570-373c-4edb-a5e7-3870debe481e">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	product: {
+		title: payload.productName,
+		body_html: payload.productName,
+		vendor: payload.vendor,
+		product_type: payload.productType,
+		variants: [{
+			price: payload.price as :string,
+			sku: payload.sku,
+			option1: 'Default'
+		}]
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <http:request config-ref="Shopify_HTTP_Request_Configuration" path="/products.json" method="POST" doc:name="post product to Shopify"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="8f4cf21c-d210-4901-8f49-5b354c886edb">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	shopifyProductId: payload.product.id,
+	sku: payload.product.variants[0].sku
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+</mule>

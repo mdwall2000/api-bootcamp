@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="getCustomers">
+        <choice doc:name="Choice">
+            <when expression="#[message.inboundProperties.'http.query.params'.email!=null]">
+                <db:select config-ref="MySQL_Configuration" doc:name="select customer by email">
+                    <db:parameterized-query><![CDATA[select * from customer 
+where email=#[message.inboundProperties.'http.query.params'.email]]]></db:parameterized-query>
+                </db:select>
+            </when>
+            <otherwise>
+                <db:select config-ref="MySQL_Configuration" doc:name="select all customers">
+                    <db:parameterized-query><![CDATA[select * from customer;]]></db:parameterized-query>
+                </db:select>
+            </otherwise>
+        </choice>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	address1: payload01.address1,
+	address2: payload01.address2,
+	city: payload01.city,
+	email: payload01.email,
+	firstName: payload01.first_name,
+	id: payload01.customer_id,
+	lastName: payload01.last_name,
+	phone: payload01.phone,
+	state: payload01.state,
+	username: payload01.username,
+	zip: payload01.zip
+})]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+</mule>

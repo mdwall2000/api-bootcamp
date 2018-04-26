@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "HTTP_Request_Configuration",
+            "typeId": "POST:/orders_request"
+        }
+    },
+    "id": "64d829de-eced-4d0e-a8b9-8e2910849484",
+    "version": "5.2.0.0"
+}

@@ -1,0 +1,16 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "shopify_order__creation_event_payload"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "HTTP_Request_Configuration",
+            "typeId": "POST:/orders_request"
+        }
+    },
+    "id": "66fa71d6-a56d-4e98-acb3-a3ae714bfd56",
+    "version": "5.2.0.0"
+}

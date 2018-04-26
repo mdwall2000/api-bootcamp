@@ -1,0 +1,57 @@
+#%RAML 1.0 Library
+usage: reusable customer, product, orderItem, and order dats types
+
+types:
+  customer:
+    properties: 
+      id?: number
+      username?: string
+      firstName?: string
+      lastName?: string
+      phone?: string
+      email?: string
+      address1?: string
+      address2?: string
+      city?: string
+      state?: string
+      zip?: string
+  
+  product:
+    properties: 
+      id: number
+      name?: string
+      price?: number
+      sku?: string
+      inventory?: number
+      shopifyProductId?: number
+
+  orderItem:
+    properties: 
+      id?: number
+      orderId?: number
+      productId?: number
+      sku?: string
+      productName?: string
+      price: number
+      quantity: number
+
+  order:
+    properties: 
+      id?: number
+      customerId: number
+      customerEmail?: string 
+      customerName?: string
+      orderDate: datetime-only
+      totalPrice: number
+      orderSource?: string
+      orderSourceId?: string
+      orderItems: orderItem[]
+
+  shopifyProduct:
+    properties: 
+      sku: string
+      productName: string
+      price: number
+      vendor: string
+      productType: string
+

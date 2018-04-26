@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "HTTP_Request_Configuration",
+            "typeId": "PATCH:/products/{productId}_request"
+        }
+    },
+    "id": "f74a8b4c-b764-45ad-a03c-3ec2972668e4",
+    "version": "5.2.0.0"
+}

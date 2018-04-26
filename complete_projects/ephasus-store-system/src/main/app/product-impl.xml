@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <flow name="getProducts">
+        <choice doc:name="Choice">
+            <when expression="#[message.inboundProperties.'http.query.params'.inShopify==false]">
+                <db:select config-ref="MySQL_Configuration" doc:name="Select products with null shopifyId">
+                    <db:parameterized-query><![CDATA[select * from product
+where shopify_product_id is null;]]></db:parameterized-query>
+                </db:select>
+            </when>
+            <when expression="#[message.inboundProperties.'http.query.params'.sku!=null]">
+                <db:select config-ref="MySQL_Configuration" doc:name="select by sku">
+                    <db:parameterized-query><![CDATA[select *
+from product
+where sku = #[message.inboundProperties.'http.query.params'.sku]]]></db:parameterized-query>
+                </db:select>
+            </when>
+            <otherwise>
+                <db:select config-ref="MySQL_Configuration" doc:name="Select all products">
+                    <db:parameterized-query><![CDATA[select * from product;]]></db:parameterized-query>
+                </db:select>
+            </otherwise>
+        </choice>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	id: payload01.product_id,
+	inventory: payload01.inventory,
+	name: payload01.name,
+	price: payload01.price,
+	shopifyProductId: "null" when payload01.shopify_product_id == null otherwise payload01.shopify_product_id,
+	sku: payload01.sku
+})]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="patchProduct">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	product_id: payload.id as :string,
+	shopify_product_id: payload.shopifyProductId as :string
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <db:update config-ref="MySQL_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[update product
+set shopify_product_id = #[payload.shopify_product_id]
+where product_id = #[payload.product_id]]]></db:parameterized-query>
+        </db:update>
+        <set-payload value="{
+	&quot;message&quot;: &quot;Product was updated&quot;
+}" doc:name="Set Payload"/>
+    </flow>
+</mule>

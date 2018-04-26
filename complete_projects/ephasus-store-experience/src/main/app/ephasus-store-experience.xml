@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="postShopfiyOrderCreationEvent">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/shopifyOrderCreationEvent" allowedMethods="POST" doc:name="POST shopifyOrderCreatonEvent"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="66fa71d6-a56d-4e98-acb3-a3ae714bfd56">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	customerEmail: payload.email,
+	orderDate: payload.created_at,
+	orderItems: payload.line_items map ((lineitem , indexOfLineitem) -> {
+		price: lineitem.price as :number,
+		productName: lineitem.title,
+		quantity: lineitem.quantity,
+		sku: lineitem.sku
+	}),
+	orderSource: 'shopify',
+	orderSourceId: payload.id as :string,
+	totalPrice: payload.total_price as :number
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <enricher source="#[payload[0].id]" target="flowVars.customerId" doc:name="customerId - Message Enricher">
+            <processor-chain doc:name="Processor Chain">
+                <http:request config-ref="HTTP_Request_Configuration" path="/customers" method="GET" doc:name="GET customer by email">
+                    <http:request-builder>
+                        <http:query-param paramName="email" value="#[payload.customerEmail]"/>
+                    </http:request-builder>
+                </http:request>
+                <dw:transform-message doc:name="Transform Message">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+                </dw:transform-message>
+            </processor-chain>
+        </enricher>
+        <enricher source="#[payload]" target="flowVars.orderItemsVar" doc:name="procutIds - Message Enricher">
+            <processor-chain doc:name="Processor Chain">
+                <dw:transform-message doc:name="Transform Message" metadata:id="b7d173e1-37b8-4303-a9e1-7fdb8eeb3782">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.orderItems map ((orderItem , indexOfOrderItem) -> {
+	quantity: orderItem.quantity as :string,
+	sku: orderItem.sku
+})]]></dw:set-payload>
+                </dw:transform-message>
+                <collection-splitter doc:name="Collection Splitter"/>
+                <set-variable variableName="tempQuantity" value="#[payload.quantity]" doc:name="set tempQuantity"/>
+                <http:request config-ref="HTTP_Request_Configuration" path="/products" method="GET" doc:name="Get product by sku">
+                    <http:request-builder>
+                        <http:query-param paramName="sku" value="#[payload.sku]"/>
+                    </http:request-builder>
+                </http:request>
+                <dw:transform-message doc:name="Transform Message" metadata:id="00caa533-8af1-458f-91a9-b2de5b8afc2b">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	price: payload[0].price,
+	productId: payload[0].id,
+	productName: payload[0].name,
+	quantity: flowVars.tempQuantity,
+	sku: payload[0].sku
+}]]></dw:set-payload>
+                </dw:transform-message>
+                <collection-aggregator failOnTimeout="true" doc:name="Collection Aggregator"/>
+            </processor-chain>
+        </enricher>
+        <dw:transform-message doc:name="Build POST order payload" metadata:id="64d829de-eced-4d0e-a8b9-8e2910849484">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	customerId: flowVars.customerId,
+	orderDate: payload.orderDate[0..18],
+	orderItems: flowVars.orderItemsVar map ((orderItemsVar , indexOfOrderItemsVar) -> {
+		price: orderItemsVar.price[0],
+		productId: orderItemsVar.productId[0] as :number,
+		quantity: orderItemsVar.quantity[0]
+	}),
+	orderSource: payload.orderSource,
+	orderSourceId: payload.orderSourceId,
+	totalPrice: payload.totalPrice
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Request_Configuration" path="/orders" method="POST" doc:name="POST order"/>
+    </flow>
+</mule>

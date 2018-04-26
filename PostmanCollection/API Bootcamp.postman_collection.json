@@ -1,0 +1,247 @@
+{
+	"info": {
+		"_postman_id": "7571f835-e28f-40b6-8552-ac254e47105c",
+		"name": "API Bootcamp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "System API",
+			"description": "",
+			"item": [
+				{
+					"name": "GET orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{system_app_name}}.cloudhub.io/api/orders",
+							"host": [
+								"{{system_app_name}}",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{system_app_name}}.cloudhub.io/api/products?",
+							"host": [
+								"{{system_app_name}}",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"api",
+								"products"
+							],
+							"query": [
+								{
+									"key": "inShopify",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "sku",
+									"value": "fgh567",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": 107,\n  \"orderDate\": \"2018-04-25T21:00:00\",\n  \"totalPrice\": 90.70,\n  \"orderSource\": \"Internal\",\n  \"orderItems\": [\n    {\n      \"productId\": 6,\n      \"price\": 35.35,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 1,\n      \"price\": 20,\n      \"quantity\": 1\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{system_app_name}}.cloudhub.io/api/orders",
+							"host": [
+								"{{system_app_name}}",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET customers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "email",
+								"value": "matt.wall@ephasus.com",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{system_app_name}}.cloudhub.io/api/customers",
+							"host": [
+								"{{system_app_name}}",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"api",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH product",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"shopifyProductId\": 0\n}"
+						},
+						"url": {
+							"raw": "{{system_app_name}}.cloudhub.io/api/products/1",
+							"host": [
+								"{{system_app_name}}",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"api",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Experience API",
+			"description": "",
+			"item": [
+				{
+					"name": "Start product batch process",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{experience_app_name}}.cloudhub.io/productBatch",
+							"host": [
+								"{{experience_app_name}}",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"productBatch"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Shopify Order Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 470332276834,\n  \"email\": \"matt.wall@ephasus.com\",\n  \"closed_at\": null,\n  \"created_at\": \"2018-04-25T16:20:34-04:00\",\n  \"updated_at\": \"2018-04-25T16:20:35-04:00\",\n  \"number\": 16,\n  \"note\": \"\",\n  \"token\": \"4041f29444cc048f3ee60c009d12ab4b\",\n  \"gateway\": \"manual\",\n  \"test\": false,\n  \"total_price\": \"81.28\",\n  \"subtotal_price\": \"78.99\",\n  \"total_weight\": 0,\n  \"total_tax\": \"2.29\",\n  \"taxes_included\": false,\n  \"currency\": \"USD\",\n  \"financial_status\": \"paid\",\n  \"confirmed\": true,\n  \"total_discounts\": \"0.00\",\n  \"total_line_items_price\": \"78.99\",\n  \"cart_token\": null,\n  \"buyer_accepts_marketing\": false,\n  \"name\": \"#1016\",\n  \"referring_site\": null,\n  \"landing_site\": null,\n  \"cancelled_at\": null,\n  \"cancel_reason\": null,\n  \"total_price_usd\": \"81.28\",\n  \"checkout_token\": null,\n  \"reference\": null,\n  \"user_id\": 919797769,\n  \"location_id\": null,\n  \"source_identifier\": null,\n  \"source_url\": null,\n  \"processed_at\": \"2018-04-25T16:20:34-04:00\",\n  \"device_id\": null,\n  \"phone\": null,\n  \"customer_locale\": null,\n  \"app_id\": 1354745,\n  \"browser_ip\": null,\n  \"landing_site_ref\": null,\n  \"order_number\": 1016,\n  \"discount_codes\": [],\n  \"note_attributes\": [],\n  \"payment_gateway_names\": [\n    \"manual\"\n  ],\n  \"processing_method\": \"manual\",\n  \"checkout_id\": null,\n  \"source_name\": \"shopify_draft_order\",\n  \"fulfillment_status\": null,\n  \"tax_lines\": [\n    {\n      \"title\": \"CO State Tax\",\n      \"price\": \"2.29\",\n      \"rate\": 0.029\n    }\n  ],\n  \"tags\": \"\",\n  \"contact_email\": \"matt.wall@ephasus.com\",\n  \"order_status_url\": \"https://checkout.shopify.com/182452233/orders/4041f29444cc048f3ee60c009d12ab4b/authenticate?key=bf576f045e11a810baeec3ef93620bba\",\n  \"line_items\": [\n    {\n      \"id\": 1213586833506,\n      \"variant_id\": 8142381088866,\n      \"title\": \"Calculator\",\n      \"quantity\": 2,\n      \"price\": \"20.00\",\n      \"sku\": \"fgh567\",\n      \"variant_title\": null,\n      \"vendor\": \"Ephasus Industries\",\n      \"fulfillment_service\": \"manual\",\n      \"product_id\": 752363372642,\n      \"requires_shipping\": true,\n      \"taxable\": true,\n      \"gift_card\": false,\n      \"name\": \"Calculator\",\n      \"variant_inventory_management\": null,\n      \"properties\": [],\n      \"product_exists\": true,\n      \"fulfillable_quantity\": 2,\n      \"grams\": 0,\n      \"total_discount\": \"0.00\",\n      \"fulfillment_status\": null,\n      \"tax_lines\": [\n        {\n          \"title\": \"CO State Tax\",\n          \"price\": \"1.16\",\n          \"rate\": 0.029\n        }\n      ]\n    },\n    {\n      \"id\": 1213586866274,\n      \"variant_id\": 8142380990562,\n      \"title\": \"Mr. Coffee\",\n      \"quantity\": 1,\n      \"price\": \"38.99\",\n      \"sku\": \"cde345\",\n      \"variant_title\": null,\n      \"vendor\": \"Ephasus Industries\",\n      \"fulfillment_service\": \"manual\",\n      \"product_id\": 752363307106,\n      \"requires_shipping\": true,\n      \"taxable\": true,\n      \"gift_card\": false,\n      \"name\": \"Mr. Coffee\",\n      \"variant_inventory_management\": null,\n      \"properties\": [],\n      \"product_exists\": true,\n      \"fulfillable_quantity\": 1,\n      \"grams\": 0,\n      \"total_discount\": \"0.00\",\n      \"fulfillment_status\": null,\n      \"tax_lines\": [\n        {\n          \"title\": \"CO State Tax\",\n          \"price\": \"1.13\",\n          \"rate\": 0.029\n        }\n      ]\n    }\n  ],\n  \"shipping_lines\": [],\n  \"billing_address\": {\n    \"first_name\": \"Matt\",\n    \"address1\": \"123 Test Stree\",\n    \"phone\": \"1231231234\",\n    \"city\": \"Denver\",\n    \"zip\": \"80210\",\n    \"province\": \"Colorado\",\n    \"country\": \"United States\",\n    \"last_name\": \"Wall\",\n    \"address2\": null,\n    \"company\": \"Ephasus\",\n    \"latitude\": null,\n    \"longitude\": null,\n    \"name\": \"Matt Wall\",\n    \"country_code\": \"US\",\n    \"province_code\": \"CO\"\n  },\n  \"shipping_address\": {\n    \"first_name\": \"Matt\",\n    \"address1\": \"123 Test Stree\",\n    \"phone\": \"1231231234\",\n    \"city\": \"Denver\",\n    \"zip\": \"80210\",\n    \"province\": \"Colorado\",\n    \"country\": \"United States\",\n    \"last_name\": \"Wall\",\n    \"address2\": null,\n    \"company\": \"Ephasus\",\n    \"latitude\": null,\n    \"longitude\": null,\n    \"name\": \"Matt Wall\",\n    \"country_code\": \"US\",\n    \"province_code\": \"CO\"\n  },\n  \"fulfillments\": [],\n  \"refunds\": [],\n  \"customer\": {\n    \"id\": 592888103010,\n    \"email\": \"matt.wall@ephasus.com\",\n    \"accepts_marketing\": false,\n    \"created_at\": \"2018-04-12T12:19:50-04:00\",\n    \"updated_at\": \"2018-04-25T16:20:34-04:00\",\n    \"first_name\": \"Matt\",\n    \"last_name\": \"Wall\",\n    \"orders_count\": 13,\n    \"state\": \"disabled\",\n    \"total_spent\": \"1327.34\",\n    \"last_order_id\": 470332276834,\n    \"note\": null,\n    \"verified_email\": true,\n    \"multipass_identifier\": null,\n    \"tax_exempt\": false,\n    \"phone\": null,\n    \"tags\": \"\",\n    \"last_order_name\": \"#1016\",\n    \"default_address\": {\n      \"id\": 630851403874,\n      \"customer_id\": 592888103010,\n      \"first_name\": \"Matt\",\n      \"last_name\": \"Wall\",\n      \"company\": \"Ephasus\",\n      \"address1\": \"123 Test Stree\",\n      \"address2\": \"\",\n      \"city\": \"Denver\",\n      \"province\": \"Colorado\",\n      \"country\": \"United States\",\n      \"zip\": \"80210\",\n      \"phone\": \"1231231234\",\n      \"name\": \"Matt Wall\",\n      \"province_code\": \"CO\",\n      \"country_code\": \"US\",\n      \"country_name\": \"United States\",\n      \"default\": true\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{experience_app_name}}.cloudhub.io/shopifyOrderCreationEvent",
+							"host": [
+								"{{experience_app_name}}",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"shopifyOrderCreationEvent"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5321e68c-a60d-472d-ab4b-43d29290da3f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "598f3ca7-dc1b-4f12-bf7c-3fff4b3bc94e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "f585a677-f7de-4266-bea8-d1be6cb09b22",
+			"key": "system_app_name",
+			"value": "ephasus-store-system",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "e4cc9cb4-b1ff-4d17-801a-d52ecd0d9206",
+			"key": "experience_app_name",
+			"value": "ephasus-store-experience",
+			"type": "string",
+			"description": ""
+		}
+	]
+}

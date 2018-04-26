@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "ephasus-product-json"
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "8ec7ac75-0228-4856-b1ab-99c3ef099e30",
+    "version": "5.2.0.0"
+}
