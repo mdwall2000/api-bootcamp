@@ -34,6 +34,62 @@ payload map ((payload01 , indexOfPayload01) -> {
 select * from product;
 
 
+Implement post order flow --------------------------------------------------
+
+first transform
+%dw 1.0
+%output application/java
+---
+payload
+
+Generate orderId sql----
+select UUID_SHORT() as order_id from dual;
+
+Insert order sql-------
+insert into orders(
+	order_id, 
+	customer_id,
+	order_date,
+	total_price,
+	order_source,
+	order_source_id
+	)
+values(
+	#[flowVars.orderId],
+	#[payload.customerId],
+	str_to_date(LEFT(#[payload.orderDate],10), '%Y-%m-%d'),
+	#[payload.totalPrice],
+	#[payload.orderSource],
+	#[payload.orderSourceId]
+
+create order item sql-----
+insert into order_item(
+	order_id, 
+	product_id, 
+	quantity, 
+	price, 
+	discount, 
+	amount) 
+values(
+	#[flowVars.orderId],
+	#[payload.productId],
+	#[payload.quantity],
+	#[payload.price],
+	0,
+	#[payload.quantity * payload.price]
+);
+
+
+Transform----
+%dw 1.0
+%output application/json
+---
+{
+	orderId: flowVars.orderId as :number
+}
+
+
+
 
 Deploy and run walkthrough-----------------------------------------
 --Paste your system project Cloudhub url: 
